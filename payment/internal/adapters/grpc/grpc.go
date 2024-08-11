@@ -18,5 +18,7 @@ func(a Adapter) Create(ctx context.Context, request *payment.CreatePaymentReques
 		return nil, status.New(codes.Internal, fmt.Sprintf("failed to charge. %v", err)).Err()
 	}
 
-	return &payment.CreatePaymentResponse{PaymentId: result.ID, BillId: result.ID}, nil
+	fmt.Println("result",result.ID)
+
+	return &payment.CreatePaymentResponse{BillId: 1}, nil
 }

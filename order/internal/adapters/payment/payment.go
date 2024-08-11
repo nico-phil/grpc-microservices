@@ -2,10 +2,13 @@ package payment
 
 import (
 	"context"
+	"time"
 
+	grpc_retry "github.com/grpc-ecosystem/go-grpc-middleware/retry"
 	"github.com/nico-phil/grpc-microservices/order/internal/application/core/domain"
 	"github.com/nico-phil/microservices-proto/golang/payment"
 	"google.golang.org/grpc"
+	"google.golang.org/grpc/codes"
 	"google.golang.org/grpc/credentials/insecure"
 )
 
@@ -19,6 +22,12 @@ func NewAdapter(paymentServiceUrl  string) (*Adapter, error) {
 	opts = append(opts, 
 		grpc.WithTransportCredentials(insecure.NewCredentials()),
 		// grpc.WithUnaryInterceptor(otelgrpc.UnaryClientInterceptor()),
+		grpc.WithChainUnaryInterceptor(
+			grpc_retry.UnaryClientInterceptor(
+				grpc_retry.WithCodes(
+					codes.Unavailable, codes.ResourceExhausted,
+		), grpc_retry.WithMax(5), 
+			grpc_retry.WithBackoff(grpc_retry.BackoffLinear(time.Second)))),
 	)
 
 	conn, err := grpc.NewClient(paymentServiceUrl, opts...)

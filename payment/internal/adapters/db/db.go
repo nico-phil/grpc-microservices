@@ -41,7 +41,7 @@ func NewAdapter(dataSourceUrl string)(*Adapter, error) {
 }
 
 
-func(a Adapter) Save(ctx context.Context, payment domain.Payment) error {
+func(a Adapter) Save(ctx context.Context, payment *domain.Payment) error {
 	paymentModel := Payment {
 		CustomerId: payment.CustomerId,
 		OrderId: payment.OrderId,

@@ -7,6 +7,6 @@ import (
 )
 
 type DBPort interface {
-	Save(context.Context,  domain.Payment) error
+	Save(context.Context,  *domain.Payment) error
 	Get(context.Context, string) (domain.Payment, error)
 }

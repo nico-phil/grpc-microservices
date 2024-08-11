@@ -18,7 +18,7 @@ func NewApplication(db ports.DBPort) *Application {
 }
 
 func (a Application) Charge(ctx context.Context, payment domain.Payment)(domain.Payment, error) {
-	err := a.db.Save(ctx, payment)
+	err := a.db.Save(ctx, &payment)
 	if err != nil {
 		return domain.Payment{}, err
 	}
