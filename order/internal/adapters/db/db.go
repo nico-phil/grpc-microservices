@@ -30,7 +30,6 @@ type OrderItem struct {
 }
 
 
-
 func NewAdapter(dataSourceUrl string)(*Adapter, error) {
 	db, openErr := gorm.Open(mysql.Open(dataSourceUrl))
 	if openErr != nil {

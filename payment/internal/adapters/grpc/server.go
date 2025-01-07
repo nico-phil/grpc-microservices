@@ -8,6 +8,7 @@ import (
 	"github.com/nico-phil/grpc-microservices/payment/config"
 	"github.com/nico-phil/grpc-microservices/payment/internal/ports"
 	"github.com/nico-phil/microservices-proto/golang/payment"
+	"go.opentelemetry.io/contrib/instrumentation/google.golang.org/grpc/otelgrpc"
 	"google.golang.org/grpc"
 	"google.golang.org/grpc/reflection"
 )
@@ -39,7 +40,10 @@ func(a Adapter) Run(){
 	// grpcServer := grpc.NewServer(
 	// 	grpc.UnaryInterceptor(otelgrpc.UnaryServerInterceptor()),
 	// )
-	grpcServer := grpc.NewServer()
+
+	grpcServer := grpc.NewServer(
+		grpc.StatsHandler(otelgrpc.NewServerHandler()),
+	)
 
 	a.server = grpcServer
 	payment.RegisterPaymentServer(grpcServer, a)

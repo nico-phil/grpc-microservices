@@ -7,6 +7,7 @@ import (
 	grpc_retry "github.com/grpc-ecosystem/go-grpc-middleware/retry"
 	"github.com/nico-phil/grpc-microservices/order/internal/application/core/domain"
 	"github.com/nico-phil/microservices-proto/golang/payment"
+	"go.opentelemetry.io/contrib/instrumentation/google.golang.org/grpc/otelgrpc"
 	"google.golang.org/grpc"
 	"google.golang.org/grpc/codes"
 	"google.golang.org/grpc/credentials/insecure"
@@ -21,7 +22,7 @@ func NewAdapter(paymentServiceUrl  string) (*Adapter, error) {
 
 	opts = append(opts, 
 		grpc.WithTransportCredentials(insecure.NewCredentials()),
-		// grpc.WithUnaryInterceptor(otelgrpc.UnaryClientInterceptor()),
+		grpc.WithUnaryInterceptor(otelgrpc.UnaryClientInterceptor()),
 		grpc.WithChainUnaryInterceptor(
 			grpc_retry.UnaryClientInterceptor(
 				grpc_retry.WithCodes(
