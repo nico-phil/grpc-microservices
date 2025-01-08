@@ -5,6 +5,7 @@ import (
 	"fmt"
 
 	"github.com/nico-phil/grpc-microservices/order/internal/application/core/domain"
+	"github.com/uptrace/opentelemetry-go-extra/otelgorm"
 	"gorm.io/driver/mysql"
 	"gorm.io/gorm"
 )
@@ -34,6 +35,10 @@ func NewAdapter(dataSourceUrl string)(*Adapter, error) {
 	db, openErr := gorm.Open(mysql.Open(dataSourceUrl))
 	if openErr != nil {
 		return nil, fmt.Errorf("db connection errror: %v", openErr)
+	}
+
+	if err := db.Use(otelgorm.NewPlugin(otelgorm.WithDBName("order"))); err != nil {
+		return nil, fmt.Errorf("db otel plugin error: %v", err)
 	}
 
 	err := db.AutoMigrate(&Order{}, OrderItem{})

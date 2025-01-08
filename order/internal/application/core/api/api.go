@@ -25,6 +25,10 @@ func NewApplication(db ports.DBPort, payment ports.PaymentPort) *Application {
 }
 
 func (a Application) PlaceOrder(ctx context.Context, order domain.Order) (domain.Order, error) {
+	// tr := otel.Tracer("order")
+	// _, span := tr.Start(ctx, "place order api func")
+	// defer span.End()
+
 	err := a.db.Save(ctx, &order)
 	if err != nil {
 		return domain.Order{}, err
