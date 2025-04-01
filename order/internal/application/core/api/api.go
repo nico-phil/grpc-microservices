@@ -2,6 +2,7 @@ package api
 
 import (
 	"context"
+	"fmt"
 
 	"github.com/nico-phil/grpc-microservices/order/internal/application/core/domain"
 	"github.com/nico-phil/grpc-microservices/order/internal/ports"
@@ -54,6 +55,7 @@ func (a Application) PlaceOrder(ctx context.Context, order domain.Order) (domain
 }
 
 func (a Application) GetOrder(ctx context.Context, id int64) (domain.Order, error) {
+	fmt.Println("id", id)
 	return a.db.Get(ctx, id)
 }
 
