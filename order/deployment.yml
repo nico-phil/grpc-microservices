@@ -5,6 +5,7 @@ metadata:
   labels:
     service: order
 spec:
+  # type: NodePort
   selector:
     service: order
   ports:
@@ -12,6 +13,7 @@ spec:
       port: 8080
       protocol: TCP
       targetPort: 8080
+      # nodePort: 30008
 
 ---
 apiVersion: apps/v1
@@ -30,51 +32,51 @@ spec:
       labels:
         service: order
     spec:
-      initContainers:
-        - name: mysql-check
-          image: busybox:1.28
-          command:
-            [
-              "sh",
-              "-c",
-              "until nslookup mysql; do echo waiting for mysql; sleep 10; done;",
-            ]
+      # initContainers:
+      #   - name: mysql-check
+      #     image: busybox:1.28
+      #     command:
+      #       [
+      #         "sh",
+      #         "-c",
+      #         "until nslookup mysql; do echo waiting for mysql; sleep 10; done;",
+      #       ]
       containers:
         - name: order
-          image: order
+          image: nicfil/order:v1
           env:
             - name: APPLICATION_PORT
               value: "8080"
             - name: ENV
-              value: "prod"
+              value: "development"
             - name: DATA_SOURCE_URL
-              value: "root:s3cr3t@tcp(mysql:3306)/orders?charset=utf8mb4&parseTime=True&loc=Local"
+              value: "root:secretpassword@tcp(db-mysql:3306)/orders?charset=utf8mb4&parseTime=True&loc=Local"
             - name: PAYMENT_SERVICE_URL
               value: "payment:8081"
           ports:
             - containerPort: 8080
-# ---
-# apiVersion: networking.k8s.io/v1
-# kind: Ingress
-# metadata:
-#   annotations:
-#     kubernetes.io/ingress.class: nginx
-#     nginx.ingress.kubernetes.io/backend-protocol: GRPC
-#     nginx.ingress.kubernetes.io/ssl-redirect: "true"
-#     cert-manager.io/cluster-issuer: selfsigned-issuer
-#   name: order
-# spec:
-#   rules:
-#     - http:
-#         paths:
-#           - path: /Order
-#             pathType: Prefix
-#             backend:
-#               service:
-#                 name: order
-#                 port:
-#                   number: 8080
-#   tls:
-#     - hosts:
-#         - ingress.local
-#       secretName: order-tls
+---
+apiVersion: networking.k8s.io/v1
+kind: Ingress
+metadata:
+  annotations:
+    kubernetes.io/ingress.class: nginx
+    nginx.ingress.kubernetes.io/backend-protocol: GRPC
+    nginx.ingress.kubernetes.io/ssl-redirect: "true"
+    cert-manager.io/cluster-issuer: selfsigned-issuer
+  name: order
+spec:
+  rules:
+    - http:
+        paths:
+          - path: /Order
+            pathType: Prefix
+            backend:
+              service:
+                name: order
+                port:
+                  number: 8080
+  tls:
+    - hosts:
+        - ingress.local
+      secretName: order-tls
