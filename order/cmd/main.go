@@ -54,12 +54,12 @@ func main(){
 
 	dbAdapter, err := db.NewAdapter(config.GetDataSourceUrl())
 	if err != nil {
-		log.Fatalf("failed to connect to db. Error %v", err)
+		log.Printf("failed to connect to db. Error %v", err)
 	}
 
 	paymentAdapter, err := payment.NewAdapter(config.GetPaymentServiceUrl())
 	if err != nil {
-		log.Fatalf("failed to initialize payment stub. error %v", err)
+		log.Printf("failed to initialize payment stub. error %v", err)
 	}
 
 	application := api.NewApplication(dbAdapter, paymentAdapter)

@@ -31,15 +31,15 @@ spec:
       labels:
         service: payment
     spec:
-      initContainers:
-        - name: mysql-check
-          image: busybox:1.28
-          command:
-            [
-              "sh",
-              "-c",
-              "until nslookup mysql; do echo waiting for mysql; sleep 10; done;",
-            ]
+      # initContainers:
+      #   - name: mysql-check
+      #     image: busybox:1.28
+      #     command:
+      #       [
+      #         "sh",
+      #         "-c",
+      #         "until nslookup mysql; do echo waiting for mysql; sleep 10; done;",
+      #       ]
       containers:
         - name: payment
           image: payment
@@ -47,30 +47,30 @@ spec:
             - name: APPLICATION_PORT
               value: "8081"
             - name: ENV
-              value: "prod"
+              value: "development"
             - name: DATA_SOURCE_URL
               value: "root:s3cr3t@tcp(mysql:3306)/payments?charset=utf8mb4&parseTime=True&loc=Local"
-# ---
-# apiVersion: networking.k8s.io/v1
-# kind: Ingress
-# metadata:
-#   annotations:
-#     kubernetes.io/ingress.class: nginx
-#     nginx.ingress.kubernetes.io/backend-protocol: GRPC
-#     nginx.ingress.kubernetes.io/ssl-redirect: "true"
-#     cert-manager.io/cluster-issuer: selfsigned-issuer
-#   name: payment
-# spec:
-#   rules:
-#     - http:
-#         paths:
-#           - path: /Payment
-#             pathType: Prefix
-#             backend:
-#               service:
-#                 name: payment
-#                 port:
-#                   number: 8081
-#   tls:
-#     - hosts:
-#         - ingress.local
+---
+apiVersion: networking.k8s.io/v1
+kind: Ingress
+metadata:
+  annotations:
+    kubernetes.io/ingress.class: nginx
+    nginx.ingress.kubernetes.io/backend-protocol: GRPC
+    nginx.ingress.kubernetes.io/ssl-redirect: "true"
+    cert-manager.io/cluster-issuer: selfsigned-issuer
+  name: payment
+spec:
+  rules:
+    - http:
+        paths:
+          - path: /Payment
+            pathType: Prefix
+            backend:
+              service:
+                name: payment
+                port:
+                  number: 8081
+  tls:
+    - hosts:
+        - ingress.local
