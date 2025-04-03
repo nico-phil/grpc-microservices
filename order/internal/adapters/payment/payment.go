@@ -22,7 +22,7 @@ func NewAdapter(paymentServiceUrl  string) (*Adapter, error) {
 
 	opts = append(opts, 
 		grpc.WithTransportCredentials(insecure.NewCredentials()),
-		grpc.WithUnaryInterceptor(otelgrpc.UnaryClientInterceptor()),
+		grpc.WithStatsHandler(otelgrpc.NewClientHandler()),
 		grpc.WithChainUnaryInterceptor(
 			grpc_retry.UnaryClientInterceptor(
 				grpc_retry.WithCodes(
