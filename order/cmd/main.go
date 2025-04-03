@@ -25,7 +25,7 @@ const (
 	id          = 1
 )
 
-func tracerProvider(url string) (*tracesdk.TracerProvider, error) {
+func tracerProvider() (*tracesdk.TracerProvider, error) {
 	exp, err := otlptracegrpc.New(context.Background(), otlptracegrpc.WithInsecure())
 	if err != nil {
 		return nil, err
@@ -51,7 +51,7 @@ func tracerProvider(url string) (*tracesdk.TracerProvider, error) {
 
 func main(){
 
-	tp, err := tracerProvider("http://jaeger-otel.jaeger.svc.cluster.local:14278/api/traces")
+	tp, err := tracerProvider()
 	if err != nil {
 		fmt.Println(err)
 	}
