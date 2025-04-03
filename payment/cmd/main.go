@@ -23,8 +23,8 @@ const (
 	id          = 1
 )
 
-func tracerProvider() (*tracesdk.TracerProvider, error) {
-	exp, err := otlptracegrpc.New(context.Background(), otlptracegrpc.WithInsecure())
+func tracerProvider(ctx context.Context) (*tracesdk.TracerProvider, error) {
+	exp, err := otlptracegrpc.New(ctx, otlptracegrpc.WithInsecure())
 	if err != nil {
 		return nil, err
 	}
@@ -42,13 +42,16 @@ func tracerProvider() (*tracesdk.TracerProvider, error) {
 }
 
 func main(){
-	tp, err :=tracerProvider()
+	ctx := context.Background()
+	tp, err :=tracerProvider(ctx)
 	if err != nil {
 		log.Println(err)
 	}
 
 	otel.SetTracerProvider(tp)
 	otel.SetTextMapPropagator(propagation.NewCompositeTextMapPropagator(propagation.TraceContext{}))
+
+	defer tp.Shutdown(ctx)
 
 	dbApater, err := db.NewAdapter(config.GetDataSourceUrl())
 	if err != nil {

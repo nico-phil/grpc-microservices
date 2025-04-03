@@ -25,15 +25,12 @@ const (
 	id          = 1
 )
 
-func tracerProvider() (*tracesdk.TracerProvider, error) {
-	exp, err := otlptracegrpc.New(context.Background(), otlptracegrpc.WithInsecure())
+func tracerProvider(ctx context.Context) (*tracesdk.TracerProvider, error) {
+	exp, err := otlptracegrpc.New(ctx, otlptracegrpc.WithInsecure())
 	if err != nil {
 		return nil, err
 	}
-	// exp, err := jaeger.New(jaeger.WithCollectorEndpoint(jaeger.WithEndpoint(url)))
-	// if err != nil {
-	// 	return nil, err
-	// }
+
 	tp := tracesdk.NewTracerProvider(
 		tracesdk.WithBatcher(exp),
 		tracesdk.WithResource(resource.NewWithAttributes(
@@ -50,14 +47,16 @@ func tracerProvider() (*tracesdk.TracerProvider, error) {
 
 
 func main(){
-
-	tp, err := tracerProvider()
+	ctx := context.Background()
+	tp, err := tracerProvider(ctx)
 	if err != nil {
 		fmt.Println(err)
 	}
 
 	otel.SetTracerProvider(tp)
 	otel.SetTextMapPropagator(propagation.NewCompositeTextMapPropagator(propagation.TraceContext{}))
+	
+	defer tp.Shutdown(ctx)
 
 	dbAdapter, err := db.NewAdapter(config.GetDataSourceUrl())
 	if err != nil {
