@@ -6,6 +6,7 @@ import (
 
 	"github.com/nico-phil/grpc-microservices/order/internal/application/core/domain"
 	"github.com/nico-phil/grpc-microservices/order/internal/ports"
+	"go.opentelemetry.io/otel"
 	"google.golang.org/genproto/googleapis/rpc/errdetails"
 	"google.golang.org/grpc/codes"
 	"google.golang.org/grpc/status"
@@ -26,9 +27,9 @@ func NewApplication(db ports.DBPort, payment ports.PaymentPort) *Application {
 }
 
 func (a Application) PlaceOrder(ctx context.Context, order domain.Order) (domain.Order, error) {
-	// tr := otel.Tracer("order")
-	// _, span := tr.Start(ctx, "place order api func")
-	// defer span.End()
+	tr := otel.Tracer("order")
+	_, span := tr.Start(ctx, "place order api func")
+	defer span.End()
 
 	err := a.db.Save(ctx, &order)
 	if err != nil {
