@@ -51,7 +51,7 @@ func NewAdapter(dataSourceUrl string)(*Adapter, error) {
 
 func (a Adapter) Get(ctx context.Context, id int64) (domain.Order, error) {
 	var orderEntity Order
-	res := a.db.WithContext(ctx).Preload("OrderItems").First(&orderEntity, 1)
+	res := a.db.WithContext(ctx).Preload("OrderItems").First(&orderEntity, id)
 
 	var orderItems []domain.OrderItem
 
