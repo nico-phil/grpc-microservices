@@ -57,6 +57,7 @@ func main(){
 		log.Printf("failed to connect to db. Error %v", err)
 	}
 
+
 	paymentAdapter, err := payment.NewAdapter(config.GetPaymentServiceUrl())
 	if err != nil {
 		log.Printf("failed to initialize payment stub. error %v", err)

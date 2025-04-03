@@ -5,7 +5,6 @@ metadata:
   labels:
     service: payment
 spec:
-  clusterIP: None
   selector:
     service: payment
   ports:
@@ -42,14 +41,14 @@ spec:
       #       ]
       containers:
         - name: payment
-          image: payment
+          image: nicfil/payment:v1
           env:
             - name: APPLICATION_PORT
               value: "8081"
             - name: ENV
               value: "development"
             - name: DATA_SOURCE_URL
-              value: "root:s3cr3t@tcp(mysql:3306)/payments?charset=utf8mb4&parseTime=True&loc=Local"
+              value: "root:secretpassword@tcp(mysql2:3306)/payment?charset=utf8mb4&parseTime=True&loc=Local"
 ---
 apiVersion: networking.k8s.io/v1
 kind: Ingress

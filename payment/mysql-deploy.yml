@@ -1,17 +1,17 @@
 apiVersion: apps/v1
 kind: Deployment
 metadata:
-  name: mysql-deploy
+  name: mysql2-deploy
 spec:
   replicas: 1
   selector:
     matchLabels:
-      name: mysql-pod
+      name: mysql2-pod
   template:
     metadata:
-      name: mysql-pod
+      name: mysql2-pod
       labels:
-        name: mysql-pod
+        name: mysql2-pod
     spec:
       containers:
         - name: mysql
@@ -22,20 +22,20 @@ spec:
             - name: MYSQL_ROOT_PASSWORD
               value: "secretpassword"
             - name: MYSQL_DATABASE
-              value: "order"
+              value: "payment"
 
 ---
 apiVersion: v1
 kind: Service
 metadata:
-  name: mysql
+  name: mysql2
   labels:
-    name: mysql
+    name: mysql2
 spec:
   type: NodePort
   selector:
-    name: mysql-pod
+    name: mysql2-pod
   ports:
     - port: 3306
       targetPort: 3306
-      nodePort: 30009
+      nodePort: 30010
