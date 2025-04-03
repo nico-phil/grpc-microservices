@@ -44,7 +44,7 @@ func tracerProvider() (*tracesdk.TracerProvider, error) {
 func main(){
 	tp, err :=tracerProvider()
 	if err != nil {
-		log.Fatal(err)
+		log.Println(err)
 	}
 
 	otel.SetTracerProvider(tp)
