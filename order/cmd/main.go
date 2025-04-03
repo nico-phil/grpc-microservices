@@ -2,6 +2,7 @@ package main
 
 import (
 	"context"
+	"fmt"
 	"log"
 
 	"github.com/nico-phil/grpc-microservices/order/config"
@@ -9,8 +10,10 @@ import (
 	"github.com/nico-phil/grpc-microservices/order/internal/adapters/grpc"
 	"github.com/nico-phil/grpc-microservices/order/internal/adapters/payment"
 	"github.com/nico-phil/grpc-microservices/order/internal/application/core/api"
+	"go.opentelemetry.io/otel"
 	"go.opentelemetry.io/otel/attribute"
 	"go.opentelemetry.io/otel/exporters/otlp/otlptrace/otlptracegrpc"
+	"go.opentelemetry.io/otel/propagation"
 	"go.opentelemetry.io/otel/sdk/resource"
 	tracesdk "go.opentelemetry.io/otel/sdk/trace"
 	semconv "go.opentelemetry.io/otel/semconv/v1.4.0"
@@ -22,11 +25,15 @@ const (
 	id          = 1
 )
 
-func tracerProvider() (*tracesdk.TracerProvider, error) {
+func tracerProvider(url string) (*tracesdk.TracerProvider, error) {
 	exp, err := otlptracegrpc.New(context.Background(), otlptracegrpc.WithInsecure())
 	if err != nil {
 		return nil, err
 	}
+	// exp, err := jaeger.New(jaeger.WithCollectorEndpoint(jaeger.WithEndpoint(url)))
+	// if err != nil {
+	// 	return nil, err
+	// }
 	tp := tracesdk.NewTracerProvider(
 		tracesdk.WithBatcher(exp),
 		tracesdk.WithResource(resource.NewWithAttributes(
@@ -44,13 +51,13 @@ func tracerProvider() (*tracesdk.TracerProvider, error) {
 
 func main(){
 
-	// tp, err := tracerProvider()
-	// if err != nil {
-	// 	fmt.Println(err)
-	// }
+	tp, err := tracerProvider("http://jaeger-otel.jaeger.svc.cluster.local:14278/api/traces")
+	if err != nil {
+		fmt.Println(err)
+	}
 
-	// otel.SetTracerProvider(tp)
-	// otel.SetTextMapPropagator(propagation.NewCompositeTextMapPropagator(propagation.TraceContext{}))
+	otel.SetTracerProvider(tp)
+	otel.SetTextMapPropagator(propagation.NewCompositeTextMapPropagator(propagation.TraceContext{}))
 
 	dbAdapter, err := db.NewAdapter(config.GetDataSourceUrl())
 	if err != nil {
@@ -60,7 +67,7 @@ func main(){
 
 	paymentAdapter, err := payment.NewAdapter(config.GetPaymentServiceUrl())
 	if err != nil {
-		log.Fatal("failed to initialize payment stub. error %v", err)
+		log.Fatalf("failed to initialize payment stub. error %v", err)
 	}
 
 	application := api.NewApplication(dbAdapter, paymentAdapter)

@@ -35,7 +35,7 @@ func (a Adapter) Run(){
 	}
 
 	grpcServer := grpc.NewServer(
-		grpc.UnaryInterceptor(otelgrpc.UnaryServerInterceptor()),
+		grpc.StatsHandler(otelgrpc.NewServerHandler()),
 		// grpc.Creds(credentials.NewTLS(&tls.Config{
 		// 	InsecureSkipVerify: true,
 		// })),
