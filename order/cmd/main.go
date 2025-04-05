@@ -3,13 +3,13 @@ package main
 import (
 	"context"
 	"fmt"
-	"log"
 
 	"github.com/nico-phil/grpc-microservices/order/config"
 	"github.com/nico-phil/grpc-microservices/order/internal/adapters/db"
 	"github.com/nico-phil/grpc-microservices/order/internal/adapters/grpc"
 	"github.com/nico-phil/grpc-microservices/order/internal/adapters/payment"
 	"github.com/nico-phil/grpc-microservices/order/internal/application/core/api"
+	log "github.com/sirupsen/logrus"
 	"go.opentelemetry.io/otel"
 	"go.opentelemetry.io/otel/attribute"
 	"go.opentelemetry.io/otel/exporters/otlp/otlptrace/otlptracegrpc"
@@ -17,6 +17,7 @@ import (
 	"go.opentelemetry.io/otel/sdk/resource"
 	tracesdk "go.opentelemetry.io/otel/sdk/trace"
 	semconv "go.opentelemetry.io/otel/semconv/v1.4.0"
+	"go.opentelemetry.io/otel/trace"
 )
 
 const (
@@ -44,6 +45,17 @@ func tracerProvider(ctx context.Context) (*tracesdk.TracerProvider, error) {
 	return tp, nil
 }
 
+type CustomLogger struct {
+	formatter log.JSONFormatter
+}
+
+func(l CustomLogger) Format(entry *log.Entry)([]byte, error){
+	span := trace.SpanFromContext(entry.Context)
+	entry.Data["trace_id"] = span.SpanContext().TraceID().String()
+	entry.Data["space_id"] = span.SpanContext().SpanID().String()
+	entry.Data["context"] = span.SpanContext()
+	return l.formatter.Format(entry)
+}
 
 
 func main(){
