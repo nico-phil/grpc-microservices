@@ -3,6 +3,7 @@ package main
 import (
 	"context"
 	"fmt"
+	"os"
 
 	"github.com/nico-phil/grpc-microservices/order/config"
 	"github.com/nico-phil/grpc-microservices/order/internal/adapters/db"
@@ -55,6 +56,16 @@ func(l CustomLogger) Format(entry *log.Entry)([]byte, error){
 	entry.Data["space_id"] = span.SpanContext().SpanID().String()
 	entry.Data["context"] = span.SpanContext()
 	return l.formatter.Format(entry)
+}
+
+func init() {
+	log.SetFormatter(CustomLogger{
+		formatter: log.JSONFormatter{FieldMap: log.FieldMap{
+			"msg": "message",
+		}},
+	})
+	log.SetOutput(os.Stdout)
+	log.SetLevel(log.InfoLevel)
 }
 
 
