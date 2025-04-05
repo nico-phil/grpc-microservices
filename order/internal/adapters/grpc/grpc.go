@@ -2,14 +2,15 @@ package grpc
 
 import (
 	"context"
-	"log/slog"
+
+	log "github.com/sirupsen/logrus"
 
 	"github.com/nico-phil/grpc-microservices/order/internal/application/core/domain"
 	"github.com/nico-phil/microservices-proto/golang/order"
 )
 
 func (a Adapter) Create(ctx context.Context, request *order.CreateOrderRequest)(*order.CreateOrderResponse, error) {
-	slog.Info("creating order....")
+	log.WithContext(ctx).Info("creating order...")
 	var orderItems []domain.OrderItem
 	for _, orderItem := range request.OrderItems {
 		orderItems = append(orderItems, domain.OrderItem{
