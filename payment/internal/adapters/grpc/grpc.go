@@ -20,5 +20,5 @@ func(a Adapter) Create(ctx context.Context, request *payment.CreatePaymentReques
 
 	fmt.Println("result",result.ID)
 
-	return &payment.CreatePaymentResponse{BillId: 1}, nil
+	return &payment.CreatePaymentResponse{BillId: result.ID}, nil
 }
