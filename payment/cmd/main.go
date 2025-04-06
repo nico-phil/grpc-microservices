@@ -2,6 +2,7 @@ package main
 
 import (
 	"context"
+	"os"
 
 	"github.com/nico-phil/grpc-microservices/payment/config"
 	"github.com/nico-phil/grpc-microservices/payment/internal/adapters/db"
@@ -53,6 +54,17 @@ func(l CustomLogger) Format(entry *log.Entry)([]byte, error){
 	entry.Data["context"] = span.SpanContext()
 	return l.formatter.Format(entry)
 }
+
+func init() {
+	log.SetFormatter(CustomLogger{
+		formatter: log.JSONFormatter{FieldMap: log.FieldMap{
+			"msg": "message",
+		}},
+	})
+	log.SetOutput(os.Stdout)
+	log.SetLevel(log.InfoLevel)
+}
+
 
 func main(){
 	ctx := context.Background()
