@@ -10,7 +10,7 @@ import (
 )
 
 func (a Adapter) Create(ctx context.Context, request *order.CreateOrderRequest)(*order.CreateOrderResponse, error) {
-	log.WithContext(ctx).Info("creating order...")
+	log.WithContext(ctx).Info("creating new order...")
 	var orderItems []domain.OrderItem
 	for _, orderItem := range request.OrderItems {
 		orderItems = append(orderItems, domain.OrderItem{
@@ -23,6 +23,7 @@ func (a Adapter) Create(ctx context.Context, request *order.CreateOrderRequest)(
 	newOrder := domain.NewOder(request.UserId, orderItems)
 	result, err := a.api.PlaceOrder(ctx, newOrder)
 	if err != nil {
+		log.WithContext(ctx).Errorf("error placing order: %s", err)
 		return nil, err
 	}
 	return &order.CreateOrderResponse{OrderId: result.ID}, nil
