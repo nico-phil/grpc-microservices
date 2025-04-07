@@ -2,7 +2,6 @@ package main
 
 import (
 	"context"
-	"fmt"
 	"os"
 
 	"github.com/nico-phil/grpc-microservices/order/config"
@@ -73,7 +72,7 @@ func main(){
 	ctx := context.Background()
 	tp, err := tracerProvider(ctx)
 	if err != nil {
-		fmt.Println(err)
+		log.WithContext(ctx).Error("error initializing trace:", err)
 	}
 
 	otel.SetTracerProvider(tp)
