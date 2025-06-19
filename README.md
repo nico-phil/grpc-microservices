@@ -10,7 +10,7 @@ This project demonstrates a microservice-based architecture for an e-commerce sy
 - **Go** for fast, type-safe service development
 - **gRPC** for efficient, contract-first communication between services
 - **Protocol Buffers (Protobuf)** for data serialization
-- **Kubernetes** for container orchestration and scalability
+- **Kubernetes** for container orchestration and deployment
 
 The system is composed of isolated services that can evolve independently and scale horizontally.
 
