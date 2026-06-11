@@ -1,9 +1,9 @@
-# 🛒 gRPC Microservices – E-Commerce Platform
+# gRPC Microservices – E-Commerce Platform
 
 A modular and scalable **e-commerce application** built using **Go** and **gRPC**, designed to run in a **Kubernetes** environment for high availability, observability, and ease of deployment.
 
 
-## 🚀 Overview
+## Overview
 
 This project demonstrates a microservice-based architecture for an e-commerce system, using:
 
