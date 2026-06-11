@@ -33,7 +33,7 @@ func (c *CreateOrderTestSuite) SetupSuite(t *testing.T) {
 	// 	log.Fatalf("Could not run compose stack: %v", err)
 	// }
 	// ctx, cancel := context.WithCancel(context.Background())
-    // t.Cleanup(cancel)
+	// t.Cleanup(cancel)
 	require.NoError(t, compose.Up(context.Background(), tc.Wait(true)), "compose.Up()")
 }
 
@@ -71,8 +71,8 @@ func (c *CreateOrderTestSuite) Test_Should_Create_Order() {
 
 func (c *CreateOrderTestSuite) TearDownSuite(t *testing.T) {
 	t.Cleanup(func() {
-        require.NoError(t, c.compose.Down(context.Background(), tc.RemoveOrphans(true), tc.RemoveImagesLocal), "compose.Down()")
-    })
+		require.NoError(t, c.compose.Down(context.Background(), tc.RemoveOrphans(true), tc.RemoveImagesLocal), "compose.Down()")
+	})
 }
 
 func TestCreateOrderTestSuite(t *testing.T) {
